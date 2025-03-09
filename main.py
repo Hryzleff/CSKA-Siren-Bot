@@ -2,8 +2,8 @@ import discord
 from discord.ext import commands
 import asyncio
 import os
-import nacl.utils  # PyNaCl import
-
+from flask import Flask
+from threading import Thread
 
 # Укажи префикс команд и intents
 intents = discord.Intents.default()
@@ -12,6 +12,18 @@ intents.members = True
 intents.message_content = True
 
 bot = commands.Bot(command_prefix="sirena", intents=intents)
+
+# Запускаем Flask-сервер для UptimeRobot
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Бот работает!"
+
+def run():
+    app.run(host="0.0.0.0", port=8080)
+
+Thread(target=run).start()
 
 # Проверяем готовность бота
 @bot.event
@@ -29,14 +41,14 @@ async def ebash(ctx):
     voice_client = await voice_channel.connect()
 
     # Воспроизведение локального файла
-    audio_source = discord.FFmpegPCMAudio("cskasiren.mp3")
+    audio_source = discord.FFmpegPCMAudio("cskasirennew.mp3")
     if not audio_source:
         await ctx.send("Файл cskasiren.mp3 не найден!")
         await voice_client.disconnect()
         return
 
     voice_client.play(audio_source, after=lambda e: print('Завершено', e))
-    await ctx.send("Воспроизводится: cskasiren.mp3")
+    await ctx.send("ДАЙТЕ ШУМУ БРАТЦЫ :pray: :pray: :pray: ")
 
     while voice_client.is_playing():
         await asyncio.sleep(1)
