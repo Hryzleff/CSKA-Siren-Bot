@@ -30,30 +30,44 @@ Thread(target=run).start()
 async def on_ready():
     print(f'Бот {bot.user} запущен!')
 
-# Подключаемся к голосовому каналу и проигрываем локальный трек
-@bot.command()
-async def ebash(ctx):
-    voice_channel = ctx.author.voice.channel
-    if not voice_channel:
+# Функция для воспроизведения аудио
+async def play_audio(ctx, audio_file):
+    if not ctx.author.voice or not ctx.author.voice.channel:
         await ctx.send("Сначала зайдите в голосовой канал!")
         return
-
-    voice_client = await voice_channel.connect()
-
-    # Воспроизведение локального файла
-    audio_source = discord.FFmpegPCMAudio("cskasirennew.mp3")
+    
+    voice_channel = ctx.author.voice.channel
+    voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    
+    if voice_client:
+        if voice_client.is_playing():
+            voice_client.stop()
+        await voice_client.move_to(voice_channel)
+    else:
+        voice_client = await voice_channel.connect()
+    
+    audio_source = discord.FFmpegPCMAudio(audio_file)
     if not audio_source:
-        await ctx.send("Файл cskasiren.mp3 не найден!")
+        await ctx.send(f"Файл {audio_file} не найден!")
         await voice_client.disconnect()
         return
-
-    voice_client.play(audio_source, after=lambda e: print('Завершено', e))
-    await ctx.send("ДАЙТЕ ШУМУ БРАТЦЫ :pray: :pray: :pray: ")
-
+    
+    voice_client.play(audio_source, after=lambda e: print(f'Завершено: {e}'))
+    await ctx.send(f"Проигрывается: {audio_file}")
+    
     while voice_client.is_playing():
         await asyncio.sleep(1)
-
+    
     await voice_client.disconnect()
 
-# Запусти бота с токеном из переменных окружения
+# Команды для разных аудиофайлов
+@bot.command()
+async def ebash(ctx):
+    await play_audio(ctx, "cskasiren.mp3")
+
+@bot.command()
+async def tishe(ctx):
+    await play_audio(ctx, "tishe.mp3")
+
+# Запуск бота с токеном
 bot.run(os.environ['DISCORD_BOT_TOKEN'])
