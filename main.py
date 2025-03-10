@@ -31,7 +31,7 @@ async def on_ready():
     print(f'Бот {bot.user} запущен!')
 
 # Функция для воспроизведения аудио
-async def play_audio(ctx, audio_file):
+async def play_audio(ctx, audio_file, message=None):
     if not ctx.author.voice or not ctx.author.voice.channel:
         await ctx.send("Сначала зайдите в голосовой канал!")
         return
@@ -52,22 +52,27 @@ async def play_audio(ctx, audio_file):
         await voice_client.disconnect()
         return
     
-    voice_client.play(audio_source, after=lambda e: print(f'Завершено: {e}'))
-    await ctx.send(f"Проигрывается: {audio_file}")
+    if message:
+        await ctx.send(message)
+    
+    def after_playing(error):
+        if error:
+            print(f'Ошибка при воспроизведении: {error}')
+        asyncio.run_coroutine_threadsafe(voice_client.disconnect(), bot.loop)
+    
+    voice_client.play(audio_source, after=after_playing)
     
     while voice_client.is_playing():
         await asyncio.sleep(1)
-    
-    await voice_client.disconnect()
 
 # Команды для разных аудиофайлов
 @bot.command()
 async def ebash(ctx):
-    await play_audio(ctx, "cskasiren.mp3", message="ДАЙТЕ ШУМУ БРАТЦЫ :pray: :pray: :pray:")
+    await play_audio(ctx, "cskasiren.mp3", "ДАЙТЕ ШУМУ БРАТЦЫ :pray: :pray: :pray:")
 
 @bot.command()
-async def tishe(ctx):
-    await play_audio(ctx, "tishe.mp3", message="ТИШ ТИШ ТИШ ПАРНИ :shushing_face: :shushing_face: :shushing_face:")
+async def tish(ctx):
+    await play_audio(ctx, "tishe.mp3", "ТИШ ТИШ ТИШ ПАРНИ :shushing_face: :shushing_face: :shushing_face:")
 
 # Запуск бота с токеном
 bot.run(os.environ['DISCORD_BOT_TOKEN'])
