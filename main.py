@@ -63,11 +63,11 @@ async def play_audio(ctx, audio_file):
 # Команды для разных аудиофайлов
 @bot.command()
 async def ebash(ctx):
-    await play_audio(ctx, "cskasiren.mp3", "ДАЙТЕ ШУМУ БРАТЦЫ :pray: :pray: :pray:")
+    await play_audio(ctx, "cskasiren.mp3", message="ДАЙТЕ ШУМУ БРАТЦЫ :pray: :pray: :pray:")
 
 @bot.command()
 async def tishe(ctx):
-    await play_audio(ctx, "tishe.mp3", "ТИШ ТИШ ТИШ ПАРНИ :shushing_face: :shushing_face: :shushing_face:")
+    await play_audio(ctx, "tishe.mp3", message="ТИШ ТИШ ТИШ ПАРНИ :shushing_face: :shushing_face: :shushing_face:")
 
 # Запуск бота с токеном
 bot.run(os.environ['DISCORD_BOT_TOKEN'])
