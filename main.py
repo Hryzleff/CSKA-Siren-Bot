@@ -71,7 +71,7 @@ async def ebash(ctx):
     await play_audio(ctx, "cskasiren.mp3", "ДАЙТЕ ШУМУ БРАТЦЫ :pray: :pray: :pray:")
 
 @bot.command()
-async def tish(ctx):
+async def tishe(ctx):
     await play_audio(ctx, "tishe.mp3", "ТИШ ТИШ ТИШ ПАРНИ :shushing_face: :shushing_face: :shushing_face:")
 
 # Запуск бота с токеном
